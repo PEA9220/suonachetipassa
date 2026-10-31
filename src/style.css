@@ -196,6 +196,13 @@ p { margin: 0; max-width: 34em; }
 .mark-missing { background: var(--mark-missing); }
 .mark-extra { background: var(--mark-extra); }
 
+/* Note sentite nel tentativo */
+.heard summary { cursor: pointer; font-weight: 700; min-height: 48px; display: flex; align-items: center; }
+.heard table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.heard th, .heard td { text-align: left; padding: 0.3rem 0.4rem 0.3rem 0; border-bottom: 1px solid var(--rule); }
+.heard th { color: var(--ink-soft); font-weight: 400; }
+.heard tr.ignored td { color: var(--ink-soft); }
+
 /* Messaggi */
 .message { padding: 1rem 1.1rem; border-radius: var(--radius-box); border-left: 6px solid var(--ink-soft); background: var(--info-bg); display: flex; flex-direction: column; gap: 0.4rem; }
 .message h2 { margin: 0; font-size: 1.2rem; }

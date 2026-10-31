@@ -18,7 +18,7 @@ import { Listener } from '../audio/listener';
 import { audioContext, toneContext, unlockAudio } from '../audio/player';
 
 type Attempt =
-  | { kind: 'played'; notes: PlayedNote[] }
+  | { kind: 'played'; notes: PlayedNote[]; frames: PitchFrame[] }
   | { kind: 'silent' | 'noisy' | 'interrupted' };
 
 let showScore = false;
@@ -103,7 +103,7 @@ export function renderExercise(app: App, ex: Exercise, notice?: MessageKey): voi
     const evaluation = evaluate(ex, attempt.notes, tol, latency);
     const { state, newlyUnlocked } = recordResult(app.state, ex.level, evaluation.total, true);
     await app.setState(state);
-    app.summary({ ex, evaluation, newlyUnlocked,
+    app.summary({ ex, evaluation, newlyUnlocked, played: attempt.notes, frames: attempt.frames, latencyMs: latency,
       rhythmSkipped: tol.rhythmMs === null ? 'level' : latency === null ? 'calibration' : null });
   });
 
@@ -174,8 +174,8 @@ async function runAttempt(app: App, ex: Exercise, status: HTMLElement, stopBtn: 
     });
     if (kind !== 'done') return { kind };
     if (isNoisy(frames.filter(f => f.timeMs >= countEnd))) return { kind: 'noisy' };
-    const notes = framesToNotes(frames).map(n => ({ ...n, startMs: n.startMs - countEnd }));
-    return { kind: 'played', notes };
+    const relative = frames.map(f => ({ ...f, timeMs: f.timeMs - countEnd }));
+    return { kind: 'played', notes: framesToNotes(relative), frames: relative };
   } finally {
     listener.stop();
   }
