@@ -1,64 +1,90 @@
-// Disegna l'icona (una croma color inchiostro su fondo colofonia) e la salva in PNG.
+// Disegna l'icona dell'app (la effe del violino) e la salva in SVG e PNG.
+// Uso: node scripts/make-icons.mjs
 import { writeFileSync } from 'node:fs';
-import { deflateSync } from 'node:zlib';
+import { Resvg } from '@resvg/resvg-js';
 
-const BG = [0xf2, 0xb3, 0x3d], INK = [0x14, 0x20, 0x2c];
+// Linea centrale della effe: due curve di Bézier, dall'occhio in alto a quello in basso.
+const SCALE = 1.28;
+const SEGMENTS = [
+  [[318, 150], [274, 128], [258, 196], [256, 256]],
+  [[256, 256], [254, 316], [238, 384], [194, 362]],
+].map(seg => seg.map(([x, y]) => [256 + (x - 256) * SCALE, 256 + (y - 256) * SCALE]));
+const EYE = 27;
 
-function crc32(buf) {
-  let c, crc = 0xffffffff;
-  for (let n = 0; n < buf.length; n++) {
-    c = (crc ^ buf[n]) & 0xff;
-    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
-    crc = (crc >>> 8) ^ c;
+const bez = ([a, b, c, d], t) => {
+  const u = 1 - t;
+  return [0, 1].map(k => u * u * u * a[k] + 3 * u * u * t * b[k] + 3 * u * t * t * c[k] + t * t * t * d[k]);
+};
+const bezD = ([a, b, c, d], t) => {
+  const u = 1 - t;
+  return [0, 1].map(k => 3 * u * u * (b[k] - a[k]) + 6 * u * t * (c[k] - b[k]) + 3 * t * t * (d[k] - c[k]));
+};
+
+// Spessore: sottile verso gli occhi, pieno al centro, come una effe intagliata.
+const width = s => 13 + 27 * Math.pow(Math.sin(Math.PI * s), 1.3);
+
+const N = 160;
+const left = [], right = [];
+SEGMENTS.forEach((seg, i) => {
+  for (let j = 0; j <= N; j++) {
+    if (i === 1 && j === 0) continue;
+    const t = j / N, s = (i + t) / 2;
+    const [x, y] = bez(seg, t), [dx, dy] = bezD(seg, t);
+    const len = Math.hypot(dx, dy) || 1, nx = -dy / len, ny = dx / len, w = width(s) / 2;
+    left.push([x + nx * w, y + ny * w]);
+    right.push([x - nx * w, y - ny * w]);
   }
-  return (crc ^ 0xffffffff) >>> 0;
-}
-function chunk(type, data) {
-  const len = Buffer.alloc(4); len.writeUInt32BE(data.length);
-  const td = Buffer.concat([Buffer.from(type, 'ascii'), data]);
-  const crc = Buffer.alloc(4); crc.writeUInt32BE(crc32(td));
-  return Buffer.concat([len, td, crc]);
-}
+});
+const f = n => n.toFixed(1);
+const stem = `M${left.map(([x, y]) => `${f(x)} ${f(y)}`).join(' L')} L${right.reverse().map(([x, y]) => `${f(x)} ${f(y)}`).join(' L')} Z`;
 
-// forma in coordinate 0..1, contenuta nella zona sicura delle icone "maskable"
-function inside(x, y) {
-  // testa della nota: ellisse inclinata
-  const cx = 0.42, cy = 0.68, a = 0.13, b = 0.095, t = -0.45;
-  const dx = x - cx, dy = y - cy;
-  const rx = dx * Math.cos(t) - dy * Math.sin(t), ry = dx * Math.sin(t) + dy * Math.cos(t);
-  if ((rx * rx) / (a * a) + (ry * ry) / (b * b) <= 1) return true;
-  // gambo
-  if (x >= 0.515 && x <= 0.56 && y >= 0.24 && y <= 0.66) return true;
-  // bandiera: scende verso destra e si assottiglia in punta
-  if (x >= 0.54 && x <= 0.72) {
-    const t = (x - 0.54) / 0.18;
-    const top = 0.24 + 0.36 * t * t;
-    const bottom = top + 0.13 * (1 - t) + 0.015;
-    if (y >= top && y <= bottom) return true;
-  }
-  return false;
-}
+// Intagli a V al centro, perpendicolari al gambo.
+const [cx, cy] = bez(SEGMENTS[0], 1), [tx, ty] = bezD(SEGMENTS[0], 1);
+const tl = Math.hypot(tx, ty), ux = tx / tl, uy = ty / tl, nx = -uy, ny = ux;
+const nick = side => {
+  const base = width(0.5) / 2 - 1, out = base + 15, half = 7;
+  const p = (a, b) => `${f(cx + nx * side * a + ux * b)} ${f(cy + ny * side * a + uy * b)}`;
+  return `M${p(base, -half)} L${p(out, 0)} L${p(base, half)} Z`;
+};
 
-function png(size) {
-  const ss = 4; // sovracampionamento per bordi morbidi
-  const raw = Buffer.alloc(size * (size * 3 + 1));
-  for (let y = 0; y < size; y++) {
-    raw[y * (size * 3 + 1)] = 0;
-    for (let x = 0; x < size; x++) {
-      let hits = 0;
-      for (let sy = 0; sy < ss; sy++) for (let sx = 0; sx < ss; sx++)
-        if (inside((x + (sx + 0.5) / ss) / size, (y + (sy + 0.5) / ss) / size)) hits++;
-      const k = hits / (ss * ss);
-      const o = y * (size * 3 + 1) + 1 + x * 3;
-      for (let c = 0; c < 3; c++) raw[o + c] = Math.round(BG[c] * (1 - k) + INK[c] * k);
-    }
-  }
-  const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(size, 0); ihdr.writeUInt32BE(size, 4);
-  ihdr[8] = 8; ihdr[9] = 2; ihdr[10] = 0; ihdr[11] = 0; ihdr[12] = 0;
-  return Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
-    chunk('IHDR', ihdr), chunk('IDAT', deflateSync(raw)), chunk('IEND', Buffer.alloc(0))]);
-}
+// Occhi: il gambo vi entra lungo la sua direzione, così il ricciolo si chiude sull'occhio.
+const eyeAt = (point, dir, sign) => {
+  const l = Math.hypot(dir[0], dir[1]);
+  return [point[0] + sign * dir[0] / l * EYE * 0.55, point[1] + sign * dir[1] / l * EYE * 0.55];
+};
+const eyeTop = eyeAt(SEGMENTS[0][0], bezD(SEGMENTS[0], 0), -1);
+const eyeBottom = eyeAt(SEGMENTS[1][3], bezD(SEGMENTS[1], 1), 1);
 
-for (const size of [192, 512]) writeFileSync(`public/icons/icon-${size}.png`, png(size));
-writeFileSync('public/icons/apple-touch-icon.png', png(180));
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="75%">
+      <stop offset="0" stop-color="#253c52"/>
+      <stop offset="1" stop-color="#111b26"/>
+    </radialGradient>
+    <linearGradient id="rosin" x1="0.2" y1="0" x2="0.6" y2="1">
+      <stop offset="0" stop-color="#ffd884"/>
+      <stop offset="0.5" stop-color="#f2b33d"/>
+      <stop offset="1" stop-color="#d4880f"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <g fill="none" stroke="#9fb6cc" stroke-linecap="round">
+    <circle cx="256" cy="256" r="166" stroke-width="5" opacity="0.20"/>
+    <circle cx="256" cy="256" r="206" stroke-width="4" opacity="0.10"/>
+  </g>
+  <g fill="url(#rosin)">
+    <path d="${stem}"/>
+    <circle cx="${f(eyeTop[0])}" cy="${f(eyeTop[1])}" r="${EYE}"/>
+    <circle cx="${f(eyeBottom[0])}" cy="${f(eyeBottom[1])}" r="${EYE}"/>
+    <path d="${nick(1)}"/>
+    <path d="${nick(-1)}"/>
+  </g>
+</svg>
+`;
+
+writeFileSync('scripts/icon.svg', svg);
+const render = size => new Resvg(svg, { fitTo: { mode: 'width', value: size } }).render().asPng();
+for (const size of [192, 512]) writeFileSync(`public/icons/icon-${size}.png`, render(size));
+writeFileSync('public/icons/apple-touch-icon.png', render(180));
+// favicon: stesso disegno con angoli arrotondati
+writeFileSync('public/favicon.svg', svg.replace('<rect width="512" height="512"', '<rect width="512" height="512" rx="96"'));

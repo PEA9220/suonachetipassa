@@ -28,4 +28,4 @@ npm run build    # versione da pubblicare in dist/
 
 ## Icone
 
-`node scripts/make-icons.mjs` rigenera le icone in `public/icons/`.
+`node scripts/make-icons.mjs` disegna l'icona (la effe del violino) in `scripts/icon.svg` e rigenera i PNG in `public/icons/` e `public/favicon.svg`.
