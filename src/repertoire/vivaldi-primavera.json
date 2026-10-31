@@ -15,48 +15,13 @@
  "notes": [
   {
    "midi": 76,
-   "startBeat": 0,
+   "startBeat": 3.5,
    "durationBeats": 0.5
   },
   {
    "midi": 80,
-   "startBeat": 0.5,
-   "durationBeats": 0.5
-  },
-  {
-   "midi": 80,
-   "startBeat": 1,
-   "durationBeats": 0.5
-  },
-  {
-   "midi": 80,
-   "startBeat": 1.5,
-   "durationBeats": 0.5
-  },
-  {
-   "midi": 78,
-   "startBeat": 2,
-   "durationBeats": 0.25
-  },
-  {
-   "midi": 76,
-   "startBeat": 2.25,
-   "durationBeats": 0.25
-  },
-  {
-   "midi": 83,
-   "startBeat": 2.5,
-   "durationBeats": 1.5
-  },
-  {
-   "midi": 83,
    "startBeat": 4,
-   "durationBeats": 0.25
-  },
-  {
-   "midi": 81,
-   "startBeat": 4.25,
-   "durationBeats": 0.25
+   "durationBeats": 0.5
   },
   {
    "midi": 80,
@@ -69,34 +34,34 @@
    "durationBeats": 0.5
   },
   {
-   "midi": 80,
-   "startBeat": 5.5,
-   "durationBeats": 0.5
-  },
-  {
    "midi": 78,
-   "startBeat": 6,
+   "startBeat": 5.5,
    "durationBeats": 0.25
   },
   {
    "midi": 76,
-   "startBeat": 6.25,
+   "startBeat": 5.75,
    "durationBeats": 0.25
   },
   {
    "midi": 83,
-   "startBeat": 6.5,
+   "startBeat": 6,
    "durationBeats": 1.5
   },
   {
    "midi": 83,
-   "startBeat": 8,
+   "startBeat": 7.5,
    "durationBeats": 0.25
   },
   {
    "midi": 81,
-   "startBeat": 8.25,
+   "startBeat": 7.75,
    "durationBeats": 0.25
+  },
+  {
+   "midi": 80,
+   "startBeat": 8,
+   "durationBeats": 0.5
   },
   {
    "midi": 80,
@@ -104,69 +69,69 @@
    "durationBeats": 0.5
   },
   {
-   "midi": 81,
+   "midi": 80,
    "startBeat": 9,
    "durationBeats": 0.5
   },
   {
-   "midi": 83,
+   "midi": 78,
    "startBeat": 9.5,
-   "durationBeats": 0.5
-  },
-  {
-   "midi": 81,
-   "startBeat": 10,
-   "durationBeats": 0.5
-  },
-  {
-   "midi": 80,
-   "startBeat": 10.5,
-   "durationBeats": 1
-  },
-  {
-   "midi": 78,
-   "startBeat": 11.5,
-   "durationBeats": 1
-  },
-  {
-   "midi": 80,
-   "startBeat": 12.5,
-   "durationBeats": 0.5
-  },
-  {
-   "midi": 80,
-   "startBeat": 13,
-   "durationBeats": 0.5
-  },
-  {
-   "midi": 80,
-   "startBeat": 13.5,
-   "durationBeats": 0.5
-  },
-  {
-   "midi": 78,
-   "startBeat": 14,
    "durationBeats": 0.25
   },
   {
    "midi": 76,
-   "startBeat": 14.25,
+   "startBeat": 9.75,
    "durationBeats": 0.25
   },
   {
    "midi": 83,
-   "startBeat": 14.5,
+   "startBeat": 10,
    "durationBeats": 1.5
   },
   {
    "midi": 83,
-   "startBeat": 16,
+   "startBeat": 11.5,
    "durationBeats": 0.25
   },
   {
    "midi": 81,
-   "startBeat": 16.25,
+   "startBeat": 11.75,
    "durationBeats": 0.25
+  },
+  {
+   "midi": 80,
+   "startBeat": 12,
+   "durationBeats": 0.5
+  },
+  {
+   "midi": 81,
+   "startBeat": 12.5,
+   "durationBeats": 0.5
+  },
+  {
+   "midi": 83,
+   "startBeat": 13,
+   "durationBeats": 0.5
+  },
+  {
+   "midi": 81,
+   "startBeat": 13.5,
+   "durationBeats": 0.5
+  },
+  {
+   "midi": 80,
+   "startBeat": 14,
+   "durationBeats": 1
+  },
+  {
+   "midi": 78,
+   "startBeat": 15,
+   "durationBeats": 1
+  },
+  {
+   "midi": 80,
+   "startBeat": 16,
+   "durationBeats": 0.5
   },
   {
    "midi": 80,
@@ -179,34 +144,34 @@
    "durationBeats": 0.5
   },
   {
-   "midi": 80,
-   "startBeat": 17.5,
-   "durationBeats": 0.5
-  },
-  {
    "midi": 78,
-   "startBeat": 18,
+   "startBeat": 17.5,
    "durationBeats": 0.25
   },
   {
    "midi": 76,
-   "startBeat": 18.25,
+   "startBeat": 17.75,
    "durationBeats": 0.25
   },
   {
    "midi": 83,
-   "startBeat": 18.5,
+   "startBeat": 18,
    "durationBeats": 1.5
   },
   {
    "midi": 83,
-   "startBeat": 20,
+   "startBeat": 19.5,
    "durationBeats": 0.25
   },
   {
    "midi": 81,
-   "startBeat": 20.25,
+   "startBeat": 19.75,
    "durationBeats": 0.25
+  },
+  {
+   "midi": 80,
+   "startBeat": 20,
+   "durationBeats": 0.5
   },
   {
    "midi": 80,
@@ -214,33 +179,68 @@
    "durationBeats": 0.5
   },
   {
-   "midi": 81,
+   "midi": 80,
    "startBeat": 21,
    "durationBeats": 0.5
   },
   {
-   "midi": 83,
+   "midi": 78,
    "startBeat": 21.5,
+   "durationBeats": 0.25
+  },
+  {
+   "midi": 76,
+   "startBeat": 21.75,
+   "durationBeats": 0.25
+  },
+  {
+   "midi": 83,
+   "startBeat": 22,
+   "durationBeats": 1.5
+  },
+  {
+   "midi": 83,
+   "startBeat": 23.5,
+   "durationBeats": 0.25
+  },
+  {
+   "midi": 81,
+   "startBeat": 23.75,
+   "durationBeats": 0.25
+  },
+  {
+   "midi": 80,
+   "startBeat": 24,
    "durationBeats": 0.5
   },
   {
    "midi": 81,
-   "startBeat": 22,
+   "startBeat": 24.5,
+   "durationBeats": 0.5
+  },
+  {
+   "midi": 83,
+   "startBeat": 25,
+   "durationBeats": 0.5
+  },
+  {
+   "midi": 81,
+   "startBeat": 25.5,
    "durationBeats": 0.5
   },
   {
    "midi": 80,
-   "startBeat": 22.5,
+   "startBeat": 26,
    "durationBeats": 1
   },
   {
    "midi": 78,
-   "startBeat": 23.5,
+   "startBeat": 27,
    "durationBeats": 1
   },
   {
    "midi": 76,
-   "startBeat": 24.5,
+   "startBeat": 28,
    "durationBeats": 3.5
   }
  ]

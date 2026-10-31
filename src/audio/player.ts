@@ -95,7 +95,7 @@ export class Player {
     const click = this.getClick();
     const t0 = audioContext().currentTime + LEAD_S;
     const { clicks, totalMs } = buildCountIn(ex);
-    for (const c of clicks) click.triggerAttackRelease(c.accent ? 'A6' : 'E6', 0.04, t0 + c.timeMs / 1000);
+    for (const c of clicks) click.triggerAttackRelease(c.accent ? 'C7' : 'G6', 0.04, t0 + c.timeMs / 1000);
     const end = t0 + totalMs / 1000;
     await this.waitUntil(end);
     return end * 1000;
@@ -106,7 +106,7 @@ export class Player {
     this.stop();
     const click = this.getClick();
     const t0 = audioContext().currentTime + LEAD_S;
-    timesMs.forEach((t, i) => click.triggerAttackRelease(i === 0 ? 'A6' : 'E6', 0.04, t0 + t / 1000));
+    timesMs.forEach((t, i) => click.triggerAttackRelease(i === 0 ? 'C7' : 'G6', 0.04, t0 + t / 1000));
     await this.waitUntil(t0 + (timesMs[timesMs.length - 1] + tailMs) / 1000);
     return timesMs.map(t => (t0 * 1000) + t);
   }
