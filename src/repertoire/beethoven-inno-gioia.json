@@ -1,0 +1,167 @@
+{
+ "id": "rep-beethoven-inno-gioia",
+ "bpm": 100,
+ "meter": [
+  4,
+  4
+ ],
+ "source": {
+  "composer": "L. van Beethoven",
+  "work": "Sinfonia n. 9, Inno alla gioia (tema)",
+  "bars": "1-8"
+ },
+ "origin": "repertoire",
+ "level": 8,
+ "notes": [
+  {
+   "midi": 66,
+   "startBeat": 0,
+   "durationBeats": 1
+  },
+  {
+   "midi": 66,
+   "startBeat": 1,
+   "durationBeats": 1
+  },
+  {
+   "midi": 67,
+   "startBeat": 2,
+   "durationBeats": 1
+  },
+  {
+   "midi": 69,
+   "startBeat": 3,
+   "durationBeats": 1
+  },
+  {
+   "midi": 69,
+   "startBeat": 4,
+   "durationBeats": 1
+  },
+  {
+   "midi": 67,
+   "startBeat": 5,
+   "durationBeats": 1
+  },
+  {
+   "midi": 66,
+   "startBeat": 6,
+   "durationBeats": 1
+  },
+  {
+   "midi": 64,
+   "startBeat": 7,
+   "durationBeats": 1
+  },
+  {
+   "midi": 62,
+   "startBeat": 8,
+   "durationBeats": 1
+  },
+  {
+   "midi": 62,
+   "startBeat": 9,
+   "durationBeats": 1
+  },
+  {
+   "midi": 64,
+   "startBeat": 10,
+   "durationBeats": 1
+  },
+  {
+   "midi": 66,
+   "startBeat": 11,
+   "durationBeats": 1
+  },
+  {
+   "midi": 66,
+   "startBeat": 12,
+   "durationBeats": 1.5
+  },
+  {
+   "midi": 64,
+   "startBeat": 13.5,
+   "durationBeats": 0.5
+  },
+  {
+   "midi": 64,
+   "startBeat": 14,
+   "durationBeats": 2
+  },
+  {
+   "midi": 66,
+   "startBeat": 16,
+   "durationBeats": 1
+  },
+  {
+   "midi": 66,
+   "startBeat": 17,
+   "durationBeats": 1
+  },
+  {
+   "midi": 67,
+   "startBeat": 18,
+   "durationBeats": 1
+  },
+  {
+   "midi": 69,
+   "startBeat": 19,
+   "durationBeats": 1
+  },
+  {
+   "midi": 69,
+   "startBeat": 20,
+   "durationBeats": 1
+  },
+  {
+   "midi": 67,
+   "startBeat": 21,
+   "durationBeats": 1
+  },
+  {
+   "midi": 66,
+   "startBeat": 22,
+   "durationBeats": 1
+  },
+  {
+   "midi": 64,
+   "startBeat": 23,
+   "durationBeats": 1
+  },
+  {
+   "midi": 62,
+   "startBeat": 24,
+   "durationBeats": 1
+  },
+  {
+   "midi": 62,
+   "startBeat": 25,
+   "durationBeats": 1
+  },
+  {
+   "midi": 64,
+   "startBeat": 26,
+   "durationBeats": 1
+  },
+  {
+   "midi": 66,
+   "startBeat": 27,
+   "durationBeats": 1
+  },
+  {
+   "midi": 64,
+   "startBeat": 28,
+   "durationBeats": 1.5
+  },
+  {
+   "midi": 62,
+   "startBeat": 29.5,
+   "durationBeats": 0.5
+  },
+  {
+   "midi": 62,
+   "startBeat": 30,
+   "durationBeats": 2
+  }
+ ]
+}
