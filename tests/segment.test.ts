@@ -42,3 +42,10 @@ describe('framesToNotes', () => {
     expect(framesToNotes(seq(silence(100), steady(440, 40), silence(100)))).toHaveLength(0);
   });
 });
+
+describe('vibrato con oscillazione di volume', () => {
+  it('una sola nota anche se il volume scende al 40% a ogni ciclo', () => {
+    const fr = vibrato(440, 25, 5.5, 1500).map(f => ({ ...f, rms: 0.1 * (0.7 + 0.3 * Math.sin((2 * Math.PI * 5.5 * f.timeMs) / 1000)) }));
+    expect(framesToNotes(fr)).toHaveLength(1);
+  });
+});

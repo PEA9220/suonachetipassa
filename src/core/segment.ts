@@ -5,7 +5,7 @@ export const SILENCE_RMS = 0.01;
 const GAP_END_MS = 40;        // silenzio che chiude una nota
 const CHANGE_SEMITONES = 0.7; // cambio d'altezza che apre una nota nuova...
 const CHANGE_MS = 30;         // ...se dura almeno tanto
-const DIP_RATIO = 0.5;        // calo di volume che separa due note uguali
+const DIP_RATIO = 0.3;        // calo di volume (circa −10 dB) che separa due note uguali: il vibrato resta sopra
 
 function median(xs: number[]): number {
   const s = [...xs].sort((a, b) => a - b);
