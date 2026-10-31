@@ -22,3 +22,22 @@ describe('session', () => {
     expect(stopAtMs({ ...pickExercise(3, 1), bpm: 60, notes: [{ midi: 69, startBeat: 0, durationBeats: 4 }] })).toBe(5000);
   });
 });
+
+import { listenDecision } from '../src/core/session';
+import { quiet, steady, seq } from './helpers/frames';
+
+describe('listenDecision', () => {
+  it('esercizio breve senza suono: silenzio, non punteggio 0', () => {
+    expect(listenDecision(quiet(3000), 0, 3000, 3000)).toBe('silent');
+  });
+  it('esercizio breve suonato: finito', () => {
+    expect(listenDecision(steady(440, 3000), 0, 3000, 3000)).toBe('done');
+  });
+  it('esercizio lungo: 5 secondi senza suono interrompono', () => {
+    expect(listenDecision(quiet(5000), 0, 5000, 12000)).toBe('silent');
+    expect(listenDecision(seq(quiet(1000), steady(440, 500), quiet(3500)), 0, 5000, 12000)).toBe('continue');
+  });
+  it('il suono durante il conteggio non conta', () => {
+    expect(listenDecision(seq(steady(440, 1000), quiet(3000)), 1000, 4000, 3000)).toBe('silent');
+  });
+});

@@ -9,10 +9,10 @@ import { hzToMidiCents } from '../core/pitch';
 import { getLevel } from '../core/levels';
 import { evaluate } from '../core/evaluate';
 import { framesToNotes } from '../core/segment';
-import { isNoisy, isSilentFor } from '../core/signal';
+import { isNoisy } from '../core/signal';
 import { recordResult } from '../core/progress';
 import { noteName } from '../core/notes';
-import { stopAtMs } from '../core/session';
+import { listenDecision, stopAtMs } from '../core/session';
 import { buildCountIn, buildPlayback } from '../core/schedule';
 import { Listener, MicPermissionError } from '../audio/listener';
 import { audioContext, unlockAudio } from '../audio/player';
@@ -165,9 +165,8 @@ async function runAttempt(app: App, ex: Exercise, status: HTMLElement, stopBtn: 
       // fermato dopo la fine prevista: si valuta comunque
       const onStop = () => finish(ctx.currentTime * 1000 - countEnd >= musicEnd ? 'done' : 'interrupted');
       const check = setInterval(() => {
-        const now = ctx.currentTime * 1000;
-        if (now - countEnd >= endAt) finish('done');
-        else if (isSilentFor(frames, countEnd, now)) finish('silent');
+        const decision = listenDecision(frames, countEnd, ctx.currentTime * 1000, endAt);
+        if (decision !== 'continue') finish(decision);
       }, 50);
       stopBtn.addEventListener('click', onStop);
     });
