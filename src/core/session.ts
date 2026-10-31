@@ -35,6 +35,17 @@ export function stopAtMs(ex: Exercise): number {
   return buildPlayback(ex).totalMs + LISTEN_TAIL_MS;
 }
 
+/**
+ * Durata minima di una nota per questo esercizio: il 40% della nota più corta prevista,
+ * tra 40 e 120 ms. Negli esercizi lenti i colpi brevi non diventano note; nei passaggi
+ * veloci le note corte restano riconosciute.
+ */
+export function minNoteMsFor(ex: Exercise): number {
+  const beatMs = 60000 / ex.bpm;
+  const shortest = Math.min(...ex.notes.map(n => n.durationBeats * beatMs));
+  return Math.min(120, Math.max(40, Math.round(0.4 * shortest)));
+}
+
 export type ListenState = 'continue' | 'done' | 'silent';
 
 /**

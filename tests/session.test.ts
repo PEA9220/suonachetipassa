@@ -45,3 +45,18 @@ describe('listenDecision', () => {
     expect(listenDecision(seq(steady(440, 1000), quiet(5000)), 1000, 6000, 3000)).toBe('silent');
   });
 });
+
+import { minNoteMsFor } from '../src/core/session';
+
+describe('minNoteMsFor', () => {
+  const ex = (durationBeats: number, bpm: number) => ({ ...pickExercise(3, 1), bpm, notes: [{ midi: 69, startBeat: 0, durationBeats }] });
+  it('esercizi lenti: i suoni sotto 120 ms non sono note', () => {
+    expect(minNoteMsFor(ex(2, 60))).toBe(120);
+  });
+  it('sedicesimi a 100 BPM (150 ms): bastano 60 ms', () => {
+    expect(minNoteMsFor(ex(0.25, 100))).toBe(60);
+  });
+  it('note velocissime: mai sotto 40 ms', () => {
+    expect(minNoteMsFor(ex(0.25, 200))).toBe(40);
+  });
+});

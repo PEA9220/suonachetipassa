@@ -12,7 +12,7 @@ import { framesToNotes } from '../core/segment';
 import { isNoisy } from '../core/signal';
 import { recordResult } from '../core/progress';
 import { noteName } from '../core/notes';
-import { listenDecision, stopAtMs } from '../core/session';
+import { listenDecision, minNoteMsFor, stopAtMs } from '../core/session';
 import { buildCountIn, buildPlayback } from '../core/schedule';
 import { Listener } from '../audio/listener';
 import { audioContext, toneContext, unlockAudio } from '../audio/player';
@@ -175,7 +175,7 @@ async function runAttempt(app: App, ex: Exercise, status: HTMLElement, stopBtn: 
     if (kind !== 'done') return { kind };
     if (isNoisy(frames.filter(f => f.timeMs >= countEnd))) return { kind: 'noisy' };
     const relative = frames.map(f => ({ ...f, timeMs: f.timeMs - countEnd }));
-    return { kind: 'played', notes: framesToNotes(relative), frames: relative };
+    return { kind: 'played', notes: framesToNotes(relative, { minNoteMs: minNoteMsFor(ex) }), frames: relative };
   } finally {
     listener.stop();
   }

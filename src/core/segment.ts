@@ -23,13 +23,16 @@ function smoothedPitches(frames: PitchFrame[]): (number | null)[] {
   });
 }
 
-// Una nota attaccata a un'altra (legato veloce) può essere più corta di MIN_NOTE_MS.
-const MIN_LINKED_NOTE_MS = 40;
+// Una nota attaccata a un'altra (legato veloce) può essere più corta del minimo: fino a 2/3.
+const LINKED_RATIO = 2 / 3;
 const DIP_RESET_MS = 150;  // un calo che dura tanto è il nuovo livello della nota
 
 type Building = { start: number; end: number; frames: number[]; peak: number };
 
-export function framesToNotes(frames: PitchFrame[]): PlayedNote[] {
+/** minNoteMs: durata sotto cui un suono non è una nota; dipende dall'esercizio (vedi minNoteMsFor). */
+export function framesToNotes(frames: PitchFrame[], opts: { minNoteMs?: number } = {}): PlayedNote[] {
+  const minNoteMs = opts.minNoteMs ?? MIN_NOTE_MS;
+  const minLinkedMs = minNoteMs * LINKED_RATIO;
   const pitch = smoothedPitches(frames);
   const notes: PlayedNote[] = [];
   const gapFrames = Math.round(GAP_END_MS / HOP_MS);
@@ -48,7 +51,7 @@ export function framesToNotes(frames: PitchFrame[]): PlayedNote[] {
       const used = cur.frames.filter(k => k <= last);
       if (used.length > 0) {
         const durationMs = frames[used[used.length - 1]].timeMs - frames[cur.start].timeMs + HOP_MS;
-        if (durationMs >= MIN_LINKED_NOTE_MS) {
+        if (durationMs >= minLinkedMs - 1e-6) {
           const m = median(used.map(k => pitch[k] as number));
           const midi = Math.round(m);
           notes.push({ midi, cents: (m - midi) * 100, startMs: frames[cur.start].timeMs, durationMs });
@@ -107,5 +110,5 @@ export function framesToNotes(frames: PitchFrame[]): PlayedNote[] {
   // scarta le note troppo corte, salvo quelle a ridosso di un'altra nota
   const near = (a: PlayedNote, b: PlayedNote | undefined) =>
     b !== undefined && Math.min(Math.abs(b.startMs - (a.startMs + a.durationMs)), Math.abs(a.startMs - (b.startMs + b.durationMs))) <= GAP_END_MS;
-  return notes.filter((n, i) => n.durationMs >= MIN_NOTE_MS || near(n, notes[i - 1]) || near(n, notes[i + 1]));
+  return notes.filter((n, i) => n.durationMs >= minNoteMs || near(n, notes[i - 1]) || near(n, notes[i + 1]));
 }

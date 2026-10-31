@@ -49,3 +49,14 @@ describe('vibrato con oscillazione di volume', () => {
     expect(framesToNotes(fr)).toHaveLength(1);
   });
 });
+
+describe('rumori brevi in un esercizio lento (tentativo reale di Dario)', () => {
+  // due colpi gravi da 70 e 60 ms separati da un buco, poi un La6 tenuto (forma del tentativo reale)
+  const fr = seq(steady(203, 70), silence(50), steady(196, 60), silence(10), steady(1760, 1860));
+  it('con la durata minima dell\'esercizio resta solo la nota vera', () => {
+    expect(framesToNotes(fr, { minNoteMs: 120 }).map(n => n.midi)).toEqual([93]);
+  });
+  it('senza indicazioni il comportamento resta quello di prima', () => {
+    expect(framesToNotes(fr).map(n => n.midi)).toEqual([56, 55, 93]);
+  });
+});
