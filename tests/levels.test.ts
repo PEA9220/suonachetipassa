@@ -15,3 +15,18 @@ describe('levels', () => {
     expect(() => getLevel(9)).toThrow();
   });
 });
+
+describe('contenuti dei livelli come nella specifica', () => {
+  it('etichette', () => {
+    expect(LEVELS.map(l => l.label)).toEqual([
+      'Note singole, prima posizione, corde La e Mi',
+      'Note singole, prima posizione, tutte le corde',
+      'Intervalli di due note',
+      'Motivi di 3-5 note, ritmi semplici',
+      'Motivi più lunghi con alterazioni',
+      'Frasi generate con cambi di posizione',
+      'Frasi generate nello stile del repertorio',
+      'Estratti veri del repertorio',
+    ]);
+  });
+});

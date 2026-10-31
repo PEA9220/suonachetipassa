@@ -38,13 +38,14 @@ export function stopAtMs(ex: Exercise): number {
 export type ListenState = 'continue' | 'done' | 'silent';
 
 /**
- * Decide se continuare ad ascoltare. Senza alcun suono dopo il conteggio l'esercizio è
- * "silent" (non conta), anche quando finisce prima dei 5 secondi di silenzio.
+ * Decide se continuare ad ascoltare. Dopo 5 secondi senza suono dalla fine del conteggio
+ * l'esercizio è "silent" e non conta; se l'esercizio è più breve si aspetta comunque il suono
+ * fino ai 5 secondi, così un tentativo muto non diventa mai un punteggio di 0.
  */
 export function listenDecision(frames: PitchFrame[], countEndMs: number, nowMs: number, endAtMs: number): ListenState {
   const elapsed = nowMs - countEndMs;
   if (isSilentFor(frames, countEndMs, nowMs)) return 'silent';
   if (elapsed < endAtMs) return 'continue';
   const heard = frames.some(f => f.timeMs >= countEndMs && f.timeMs <= nowMs && f.rms >= SILENCE_RMS);
-  return heard ? 'done' : 'silent';
+  return heard ? 'done' : 'continue';
 }

@@ -10,10 +10,10 @@ import { keepAwake, releaseAwake } from './wakelock';
 
 const CLICKS = Array.from({ length: 8 }, (_, i) => i * 1000); // 8 click a 60 BPM
 
-export function renderCalibration(app: App): void {
+export function renderCalibration(app: App, firstRun = false): void {
   const box = h('div', { 'aria-live': 'polite' });
   const startBtn = h('button', { class: 'btn primary huge' }, 'Inizia');
-  const backBtn = h('button', { class: 'btn quiet', onclick: () => app.home() }, 'Indietro');
+  const backBtn = h('button', { class: 'btn quiet', onclick: () => app.home() }, firstRun ? 'Più tardi' : 'Indietro');
 
   startBtn.addEventListener('click', async () => {
     startBtn.disabled = true; backBtn.disabled = true;
@@ -52,6 +52,7 @@ export function renderCalibration(app: App): void {
     h('header', { class: 'bar' }, backBtn, h('h1', { class: 'compact', tabindex: -1 }, 'Calibrazione')),
     h('p', { class: 'lead' }, 'Il telefono sente il suono con un piccolo ritardo. Per misurarlo suonerò 8 click a 60 al minuto: suona un La breve e deciso insieme a ogni click.'),
     h('p', {}, 'Mettiti dove ti eserciti di solito, con il telefono sul leggio.'),
+    firstRun ? h('p', { class: 'hint' }, 'Puoi farla anche più tardi dalla schermata iniziale: finché manca, il ritmo non viene valutato.') : null,
     box,
     startBtn,
   );

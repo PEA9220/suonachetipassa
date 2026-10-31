@@ -2,7 +2,7 @@ import type { App } from './app';
 import { h, screen } from './dom';
 import { messageBox, type MessageKey } from './messages';
 import { renderScore } from './score';
-import { keepAwake, releaseAwake } from './wakelock';
+import { keepAwake } from './wakelock';
 import type { Exercise, PlayedNote } from '../core/types';
 import type { PitchFrame } from '../core/pitch';
 import { hzToMidiCents } from '../core/pitch';
@@ -14,7 +14,7 @@ import { recordResult } from '../core/progress';
 import { noteName } from '../core/notes';
 import { listenDecision, stopAtMs } from '../core/session';
 import { buildCountIn, buildPlayback } from '../core/schedule';
-import { Listener, MicPermissionError } from '../audio/listener';
+import { Listener, MicPermissionError, MicUnavailableError } from '../audio/listener';
 import { audioContext, unlockAudio } from '../audio/player';
 
 type Attempt =
@@ -34,6 +34,9 @@ export function renderExercise(app: App, ex: Exercise, notice?: MessageKey): voi
   const backBtn = h('button', { class: 'btn quiet' }, 'Indietro');
   const noticeBox = h('div', {}, notice ? messageBox(notice) : null);
   let busy = false;
+  // ogni messaggio propone un'azione: qui, riprovare
+  const retry = () => h('button', { class: 'btn', onclick: () => playBtn.click() }, 'Riprova');
+  const showNotice = (key: MessageKey) => noticeBox.replaceChildren(messageBox(key, retry()));
 
   const setBusy = (b: boolean) => {
     busy = b;
@@ -72,30 +75,27 @@ export function renderExercise(app: App, ex: Exercise, notice?: MessageKey): voi
     try {
       await unlockAudio();
     } catch {
-      noticeBox.replaceChildren(messageBox('audioFailed'));
+      showNotice('audioFailed');
       setBusy(false);
       return;
     }
-    await keepAwake();
     let attempt: Attempt;
     try {
       attempt = await runAttempt(app, ex, status, stopBtn);
     } catch (e) {
-      releaseAwake();
       status.replaceChildren();
       stopBtn.hidden = true;
-      noticeBox.replaceChildren(messageBox(e instanceof MicPermissionError ? 'micDenied' : 'micUnavailable'));
+      showNotice(e instanceof MicPermissionError ? 'micDenied' : e instanceof MicUnavailableError ? 'micUnavailable' : 'audioFailed');
       setBusy(false);
       return;
     }
-    releaseAwake();
     stopBtn.hidden = true;
     status.replaceChildren();
     setBusy(false);
     if (attempt.kind !== 'played') {
       // esercizio non valido: non entra nello storico
       await app.setState(recordResult(app.state, ex.level, 0, false).state);
-      noticeBox.replaceChildren(messageBox(attempt.kind));
+      showNotice(attempt.kind);
       return;
     }
     const tol = level.tolerances;
@@ -122,6 +122,8 @@ export function renderExercise(app: App, ex: Exercise, notice?: MessageKey): voi
     stopBtn,
   );
   drawScore();
+  // lo schermo resta acceso per tutto l'esercizio
+  void keepAwake();
 }
 
 async function runAttempt(app: App, ex: Exercise, status: HTMLElement, stopBtn: HTMLButtonElement): Promise<Attempt> {

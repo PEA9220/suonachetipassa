@@ -27,8 +27,12 @@ import { listenDecision } from '../src/core/session';
 import { quiet, steady, seq } from './helpers/frames';
 
 describe('listenDecision', () => {
-  it('esercizio breve senza suono: silenzio, non punteggio 0', () => {
-    expect(listenDecision(quiet(3000), 0, 3000, 3000)).toBe('silent');
+  it('esercizio breve senza suono: aspetta i 5 secondi, poi silenzio (mai punteggio 0)', () => {
+    expect(listenDecision(quiet(3000), 0, 3000, 3000)).toBe('continue');
+    expect(listenDecision(quiet(5000), 0, 5000, 3000)).toBe('silent');
+  });
+  it('esercizio breve iniziato in ritardo: si valuta quando arriva il suono', () => {
+    expect(listenDecision(seq(quiet(3500), steady(440, 200)), 0, 3700, 3000)).toBe('done');
   });
   it('esercizio breve suonato: finito', () => {
     expect(listenDecision(steady(440, 3000), 0, 3000, 3000)).toBe('done');
@@ -38,6 +42,6 @@ describe('listenDecision', () => {
     expect(listenDecision(seq(quiet(1000), steady(440, 500), quiet(3500)), 0, 5000, 12000)).toBe('continue');
   });
   it('il suono durante il conteggio non conta', () => {
-    expect(listenDecision(seq(steady(440, 1000), quiet(3000)), 1000, 4000, 3000)).toBe('silent');
+    expect(listenDecision(seq(steady(440, 1000), quiet(5000)), 1000, 6000, 3000)).toBe('silent');
   });
 });

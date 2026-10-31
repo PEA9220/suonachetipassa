@@ -5,6 +5,7 @@ import { messageBox } from './messages';
 import { renderScore } from './score';
 import { markFor, pickExercise, type Mark } from '../core/session';
 import { formatPercent } from '../core/notes';
+import { keepAwake } from './wakelock';
 
 export const MARK_LABELS: Record<Mark, string> = {
   correct: 'giusta', flat: 'calante', sharp: 'crescente', early: 'in anticipo', late: 'in ritardo',
@@ -49,4 +50,5 @@ export function renderSummary(app: App, o: Outcome): void {
     h('button', { class: 'btn quiet', onclick: () => app.home() }, 'Torna ai livelli'),
   );
   void renderScore(scoreBox, ex, colors);
+  void keepAwake();
 }

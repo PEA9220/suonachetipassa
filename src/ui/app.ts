@@ -15,7 +15,7 @@ export type App = {
   home(notice?: MessageKey): void;
   exercise(ex: Exercise, notice?: MessageKey): void;
   summary(outcome: Outcome): void;
-  calibration(): void;
+  calibration(firstRun?: boolean): void;
   prova(): void;
 };
 

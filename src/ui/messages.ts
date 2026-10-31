@@ -6,16 +6,16 @@ export type MessageKey =
 
 type Message = { title: string; body: string; tone: 'error' | 'info' };
 
-// Un messaggio per ogni caso di errore previsto.
+// Un messaggio per ogni riga della tabella "Gestione degli errori" della specifica, più i casi tecnici.
 export const MESSAGES: Record<MessageKey, Message> = {
   micDenied: { tone: 'error', title: 'Il microfono è bloccato',
-    body: "Senza microfono l'app non può ascoltarti. Consenti l'accesso al microfono nelle impostazioni del browser per questo sito, poi riprova." },
+    body: "Senza microfono l'app non può ascoltarti. Consenti l'accesso al microfono nelle impostazioni del browser per questo sito, poi riprova. Intanto puoi ascoltare gli esercizi." },
   micUnavailable: { tone: 'error', title: 'Nessun microfono disponibile',
     body: "Il dispositivo non offre un microfono, oppure un'altra app lo sta usando. Chiudi le altre app che registrano e riprova." },
   silent: { tone: 'info', title: 'Non ho sentito niente',
-    body: 'Per 5 secondi dopo il conteggio non è arrivato alcun suono. L’esercizio non conta. Avvicina il telefono o suona più forte.' },
+    body: 'Per 5 secondi dopo il conteggio non è arrivato alcun suono. Il microfono è coperto o il telefono è troppo lontano? L’esercizio non conta: sistema e riprova.' },
   noisy: { tone: 'info', title: 'C’è troppo rumore',
-    body: 'Sento suono forte ma nessuna nota riconoscibile. L’esercizio non conta. Cerca un ambiente più silenzioso e riprova.' },
+    body: 'C’è troppo rumore di fondo e il segnale non è chiaro, quindi l’esercizio non conta. Cerca un ambiente più silenzioso e riprova.' },
   interrupted: { tone: 'info', title: 'Esercizio interrotto',
     body: 'L’hai fermato prima della fine, quindi non conta per lo sblocco.' },
   calibrationFailed: { tone: 'info', title: 'Calibrazione non riuscita',
