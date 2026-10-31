@@ -1,6 +1,6 @@
 import { PitchDetector } from 'pitchy';
 
-export const FRAME_SIZE = 2048;
+export const FRAME_SIZE = 1024;
 export const HOP_MS = 10;
 export const MIN_NOTE_MS = 60;
 export const MIN_MIDI = 55; // Sol3
