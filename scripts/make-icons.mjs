@@ -9,7 +9,7 @@ const SEGMENTS = [
   [[318, 150], [274, 128], [258, 196], [256, 256]],
   [[256, 256], [254, 316], [238, 384], [194, 362]],
 ].map(seg => seg.map(([x, y]) => [256 + (x - 256) * SCALE, 256 + (y - 256) * SCALE]));
-const EYE = 27;
+const EYE = 25;
 
 const bez = ([a, b, c, d], t) => {
   const u = 1 - t;
@@ -20,8 +20,16 @@ const bezD = ([a, b, c, d], t) => {
   return [0, 1].map(k => 3 * u * u * (b[k] - a[k]) + 6 * u * t * (c[k] - b[k]) + 3 * t * t * (d[k] - c[k]));
 };
 
-// Spessore: sottile verso gli occhi, pieno al centro, come una effe intagliata.
-const width = s => 13 + 27 * Math.pow(Math.sin(Math.PI * s), 1.3);
+// Spessore: pieno al centro, si assottiglia e poi si riallarga senza scalini fino agli occhi,
+// come nell'intaglio vero, dove il gambo sfocia negli occhi rotondi.
+const smooth = x => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x));
+const FLARE = 0.16; // tratto finale in cui il gambo si allarga fino all'occhio
+const width = s => {
+  const body = 11 + 27 * Math.pow(Math.sin(Math.PI * s), 1.3);
+  const end = Math.min(s, 1 - s); // distanza dall'estremità più vicina
+  const k = smooth(1 - end / FLARE);
+  return body + (2 * EYE * 0.98 - body) * Math.pow(k, 2.2);
+};
 
 const N = 160;
 const left = [], right = [];
@@ -47,13 +55,11 @@ const nick = side => {
   return `M${p(base, -half)} L${p(out, 0)} L${p(base, half)} Z`;
 };
 
-// Occhi: il gambo vi entra lungo la sua direzione, così il ricciolo si chiude sull'occhio.
-const eyeAt = (point, dir, sign) => {
-  const l = Math.hypot(dir[0], dir[1]);
-  return [point[0] + sign * dir[0] / l * EYE * 0.55, point[1] + sign * dir[1] / l * EYE * 0.55];
-};
-const eyeTop = eyeAt(SEGMENTS[0][0], bezD(SEGMENTS[0], 0), -1);
-const eyeBottom = eyeAt(SEGMENTS[1][3], bezD(SEGMENTS[1], 1), 1);
+// Occhi: centrati sulle estremità del gambo, che vi si allarga dentro.
+const eyeTop = SEGMENTS[0][0];
+const eyeBottom = SEGMENTS[1][3];
+
+const STAFF = [86, 116, 146, 176, 206];
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
@@ -68,9 +74,9 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
     </linearGradient>
   </defs>
   <rect width="512" height="512" fill="url(#bg)"/>
-  <g fill="none" stroke="#9fb6cc" stroke-linecap="round">
-    <circle cx="256" cy="256" r="166" stroke-width="5" opacity="0.20"/>
-    <circle cx="256" cy="256" r="206" stroke-width="4" opacity="0.10"/>
+  <!-- cinque cerchi equidistanti come le righe del pentagramma; la effe ci sta sopra come una nota -->
+  <g fill="none" stroke="#9fb6cc" stroke-width="4.5" opacity="0.30">
+${STAFF.map(r => `    <circle cx="256" cy="256" r="${r}"/>`).join('\n')}
   </g>
   <g fill="url(#rosin)">
     <path d="${stem}"/>
