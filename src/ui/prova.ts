@@ -1,11 +1,11 @@
 import type { App } from './app';
 import { h, screen } from './dom';
-import { messageBox } from './messages';
+import { errorBox } from './messages';
 import { hzToMidiCents } from '../core/pitch';
 import { noteName } from '../core/notes';
 import { getRepertoire } from '../core/repertoire';
-import { Listener, MicPermissionError } from '../audio/listener';
-import { audioContext, unlockAudio } from '../audio/player';
+import { Listener } from '../audio/listener';
+import { toneContext, unlockAudio } from '../audio/player';
 
 /** Pagina di prova: frame del microfono dal vivo ed estratti del repertorio. */
 export function renderProva(app: App): void {
@@ -20,7 +20,7 @@ export function renderProva(app: App): void {
     if (listener) { stop(); return; }
     try {
       await unlockAudio();
-      listener = new Listener(audioContext());
+      listener = new Listener(toneContext());
       await listener.start(f => {
         const pitch = f.hz === null ? null : hzToMidiCents(f.hz);
         reading.textContent = pitch ? `${noteName(pitch.midi)} ${pitch.cents >= 0 ? '+' : '−'}${Math.abs(pitch.cents).toFixed(0)} cent` : '—';
@@ -31,7 +31,7 @@ export function renderProva(app: App): void {
       toggle.textContent = 'Spegni il microfono';
     } catch (e) {
       listener = null;
-      out.replaceChildren(messageBox(e instanceof MicPermissionError ? 'micDenied' : 'micUnavailable'));
+      out.replaceChildren(errorBox(e));
     }
   });
 

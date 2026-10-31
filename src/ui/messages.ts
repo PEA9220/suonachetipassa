@@ -1,4 +1,5 @@
 import { h } from './dom';
+import { MicPermissionError, MicUnavailableError } from '../audio/listener';
 
 export type MessageKey =
   | 'micDenied' | 'micUnavailable' | 'silent' | 'noisy' | 'interrupted'
@@ -31,8 +32,25 @@ export const MESSAGES: Record<MessageKey, Message> = {
 };
 
 export function messageBox(key: MessageKey, ...actions: HTMLElement[]): HTMLElement {
+  return messageWithDetail(key, null, ...actions);
+}
+
+function messageWithDetail(key: MessageKey, detail: string | null, ...actions: HTMLElement[]): HTMLElement {
   const m = MESSAGES[key];
   return h('section', { class: `message message-${m.tone}`, role: m.tone === 'error' ? 'alert' : 'status' },
     h('h2', { tabindex: -1 }, m.title), h('p', {}, m.body),
+    detail ? h('p', { class: 'detail' }, `Dettaglio tecnico: ${detail}`) : null,
     actions.length ? h('div', { class: 'actions' }, ...actions) : null);
+}
+
+/** Il messaggio giusto per un errore dell'ascolto: permesso, microfono assente o problema audio. */
+export function messageKeyFor(e: unknown): MessageKey {
+  if (e instanceof MicPermissionError) return 'micDenied';
+  if (e instanceof MicUnavailableError) return 'micUnavailable';
+  return 'audioFailed';
+}
+
+export function errorBox(e: unknown, ...actions: HTMLElement[]): HTMLElement {
+  const key = messageKeyFor(e);
+  return messageWithDetail(key, key === 'micDenied' ? null : (e instanceof Error ? e.message : String(e)), ...actions);
 }

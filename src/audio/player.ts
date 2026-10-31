@@ -9,6 +9,11 @@ export function audioContext(): AudioContext {
   return Tone.getContext().rawContext as AudioContext;
 }
 
+/** Il contesto di Tone.js, da passare all'ascoltatore. */
+export function toneContext(): Tone.BaseContext {
+  return Tone.getContext();
+}
+
 /** Da chiamare dentro un gesto dell'utente: i browser avviano l'audio solo così. */
 export async function unlockAudio(): Promise<void> {
   await Tone.start();

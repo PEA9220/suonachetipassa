@@ -199,6 +199,7 @@ p { margin: 0; max-width: 34em; }
 /* Messaggi */
 .message { padding: 1rem 1.1rem; border-radius: var(--radius-box); border-left: 6px solid var(--ink-soft); background: var(--info-bg); display: flex; flex-direction: column; gap: 0.4rem; }
 .message h2 { margin: 0; font-size: 1.2rem; }
+.message .detail { color: var(--ink-soft); font-size: 1rem; overflow-wrap: anywhere; }
 .message-error { border-left-color: var(--danger); background: var(--error-bg); }
 .message-good { border-left-color: var(--mark-correct); background: var(--good-bg); }
 

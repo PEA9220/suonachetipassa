@@ -1,11 +1,11 @@
 import type { App } from './app';
 import { h, screen } from './dom';
-import { messageBox } from './messages';
+import { errorBox, messageBox } from './messages';
 import type { PitchFrame } from '../core/pitch';
 import { framesToNotes } from '../core/segment';
 import { computeLatency } from '../core/calibration';
-import { Listener, MicPermissionError } from '../audio/listener';
-import { audioContext, unlockAudio } from '../audio/player';
+import { Listener } from '../audio/listener';
+import { toneContext, unlockAudio } from '../audio/player';
 import { keepAwake, releaseAwake } from './wakelock';
 
 const CLICKS = Array.from({ length: 8 }, (_, i) => i * 1000); // 8 click a 60 BPM
@@ -22,7 +22,7 @@ export function renderCalibration(app: App, firstRun = false): void {
     try {
       await unlockAudio();
       await keepAwake();
-      const listener = new Listener(audioContext());
+      const listener = new Listener(toneContext());
       await listener.start(f => frames.push(f));
       let clickTimes: number[];
       try {
@@ -42,7 +42,7 @@ export function renderCalibration(app: App, firstRun = false): void {
         startBtn.textContent = 'Ripeti';
       }
     } catch (e) {
-      box.replaceChildren(messageBox(e instanceof MicPermissionError ? 'micDenied' : 'micUnavailable'));
+      box.replaceChildren(errorBox(e));
     }
     releaseAwake();
     startBtn.disabled = false; backBtn.disabled = false;

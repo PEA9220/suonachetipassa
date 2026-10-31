@@ -1,6 +1,6 @@
 import type { App } from './app';
 import { h, screen } from './dom';
-import { messageBox, type MessageKey } from './messages';
+import { errorBox, messageBox, type MessageKey } from './messages';
 import { renderScore } from './score';
 import { keepAwake } from './wakelock';
 import type { Exercise, PlayedNote } from '../core/types';
@@ -14,8 +14,8 @@ import { recordResult } from '../core/progress';
 import { noteName } from '../core/notes';
 import { listenDecision, stopAtMs } from '../core/session';
 import { buildCountIn, buildPlayback } from '../core/schedule';
-import { Listener, MicPermissionError, MicUnavailableError } from '../audio/listener';
-import { audioContext, unlockAudio } from '../audio/player';
+import { Listener } from '../audio/listener';
+import { audioContext, toneContext, unlockAudio } from '../audio/player';
 
 type Attempt =
   | { kind: 'played'; notes: PlayedNote[] }
@@ -85,7 +85,7 @@ export function renderExercise(app: App, ex: Exercise, notice?: MessageKey): voi
     } catch (e) {
       status.replaceChildren();
       stopBtn.hidden = true;
-      showNotice(e instanceof MicPermissionError ? 'micDenied' : e instanceof MicUnavailableError ? 'micUnavailable' : 'audioFailed');
+      noticeBox.replaceChildren(errorBox(e, retry()));
       setBusy(false);
       return;
     }
@@ -130,7 +130,7 @@ async function runAttempt(app: App, ex: Exercise, status: HTMLElement, stopBtn: 
   const ctx = audioContext();
   const frames: PitchFrame[] = [];
   const live = h('p', { class: 'live-note' }, '');
-  const listener = new Listener(ctx);
+  const listener = new Listener(toneContext());
   await listener.start(f => {
     frames.push(f);
     if (f.hz !== null && f.rms >= 0.01) {
